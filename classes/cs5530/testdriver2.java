@@ -1,16 +1,18 @@
 package cs5530;
 
 
-import javax.xml.crypto.Data;
+
 import java.lang.*;
-import java.sql.*;
 import java.io.*;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Hashtable;
 
 public class testdriver2
 {
 
     /**
-     * @param args
+     *
      */
     public static void displayMenu()
     {
@@ -18,7 +20,7 @@ public class testdriver2
         System.out.println("1. register a new user:");
         System.out.println("2. enter your own query:");
         System.out.println("3. exit:");
-        System.out.println("pleasse enter your choice:");
+        System.out.println("please enter your choice:");
     }
 
     public static void main(String[] args)
@@ -52,12 +54,17 @@ public class testdriver2
                     continue;
                 if (c == 1)
                 {
-                    System.out.println("please enter a cname:");
-                    while ((cname = in.readLine()) == null && cname.length() == 0) ;
-                    System.out.println("please enter a dname:");
-                    while ((dname = in.readLine()) == null && dname.length() == 0) ;
-                    UU course = new UU();
-                    System.out.println(course.getCourse(cname, dname));
+                    HashMap<String, String> inputs = new HashMap<>();
+                    String[] requiredFields = new String[] {"login", "name", "address", "phone", "password"};
+                    for (String field : requiredFields)
+                    {
+                        System.out.println(String.format("Please enter a %s:", field));
+
+                        String input;
+                        while ((input = in.readLine()) == null && input.length() == 0);
+                        inputs.put(field, input);
+                    }
+                    System.out.println(UU.Register(inputs));
                 } else if (c == 2)
                 {
                     System.out.println("please enter your query below:");

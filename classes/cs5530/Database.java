@@ -2,6 +2,8 @@ package cs5530;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Database
 {
@@ -13,7 +15,7 @@ public class Database
         return _main;
     }
 
-    private static Connector _connector;
+    private static Connector2 _connector;
 
     private Database()
     {
@@ -23,7 +25,7 @@ public class Database
     {
         try
         {
-            _connector = new Connector();
+            _connector = new Connector2();
             System.out.println("Database connection established");
         }
         catch (Exception e)
@@ -34,19 +36,41 @@ public class Database
 
     public String RunQuery(String sql)
     {
-        StringBuilder output = new StringBuilder();
+        List<String> objects = new LinkedList<>();
+
         ResultSet rs = null;
         System.out.println("executing " + sql);
         try
         {
+
             rs = _connector.stmt.executeQuery(sql);
             ResultSetMetaData rsmd = rs.getMetaData();
             int numCols = rsmd.getColumnCount();
             while (rs.next())
             {
+                StringBuilder obj = new StringBuilder("{");
                 for (int i = 1; i <= numCols; i++)
-                    System.out.print(rs.getString(i) + "  ");
-                System.out.println("");
+                {
+                    System.out.println(String.format("%s: %s", rsmd.getColumnName(i), rsmd.getColumnType(i)));
+                    // SEE: https://docs.oracle.com/javase/7/docs/api/constant-values.html#java.sql.Types
+                    switch (rsmd.getColumnType(i))
+                    {
+                        case 4:
+                        case 5:
+                        case 6:
+                        case 7:
+                        case 8:
+                        case 16:
+                            obj.append(String.format("\"%s\": %s", rsmd.getColumnName(i), rs.getString(i)));
+                            break;
+                        default:
+                            obj.append(String.format("\"%s\": \"%s\"", rsmd.getColumnName(i), rs.getString(i)));
+                            break;
+                    }
+                    if (i < numCols) obj.append(",");
+                }
+                obj.append("}");
+                objects.add(obj.toString());
             }
 
             rs.close();
@@ -54,6 +78,7 @@ public class Database
         catch (Exception e)
         {
             System.out.println(e.toString());
+            return e.getLocalizedMessage();
         }
         finally
         {
@@ -67,7 +92,15 @@ public class Database
                 System.out.println("cannot close resultset");
             }
         }
-        return output.toString();
+        if (objects.size() > 1)
+        {
+            return "[" + String.join(",", objects) + "]";
+        }
+        else if (objects.size() == 1)
+        {
+            return objects.get(0);
+        }
+        return "";
     }
 
     public void Close()
@@ -84,6 +117,22 @@ public class Database
         catch (Exception ignored)
         {
 
+        }
+    }
+
+    public String RunUpdate(String sql)
+    {
+        List<String> objects = new LinkedList<>();
+
+        System.out.println("executing " + sql);
+        try
+        {
+            return _connector.stmt.executeUpdate(sql) == 1 ? "Success" : "Fail";
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.toString());
+            return e.getLocalizedMessage();
         }
     }
 }
