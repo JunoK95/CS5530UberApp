@@ -26,7 +26,7 @@ public class Connector2
 		int rport = 3306;
 
 		// ?allowMultiQueryies=true this allows for multiple queries to be sent in one string // YOU MAY NOT WANT THIS FUNCTIONALITY
-		String url = "jdbc:mysql://localhost:" + lport + "/YOUR DB HERE?allowMultiQueries=true";
+		String url = "jdbc:mysql://localhost:" + lport + "/5530db18?allowMultiQueries=true";
 		String dbUser = "5530u18";
 		String dbPassword = "i15jkh0g";
 		String driverName = "com.mysql.jdbc.Driver";
