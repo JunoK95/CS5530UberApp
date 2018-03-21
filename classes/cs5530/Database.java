@@ -51,7 +51,6 @@ public class Database
                 StringBuilder obj = new StringBuilder("{");
                 for (int i = 1; i <= numCols; i++)
                 {
-                    System.out.println(String.format("%s: %s", rsmd.getColumnName(i), rsmd.getColumnType(i)));
                     // SEE: https://docs.oracle.com/javase/7/docs/api/constant-values.html#java.sql.Types
                     switch (rsmd.getColumnType(i))
                     {
