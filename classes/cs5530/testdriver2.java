@@ -18,7 +18,7 @@ public class testdriver2
      */
     public static void displayMenu()
     {
-        System.out.println("=============================");
+        System.out.println("\n=============================");
         switch (UserType)
         {
             case "UU":
@@ -39,7 +39,7 @@ public class testdriver2
                 System.out.println("6. exit");
                 break;
         }
-        System.out.println("=============================");
+        System.out.println("=============================\n");
         System.out.println("please enter your choice:");
     }
 
@@ -141,6 +141,9 @@ public class testdriver2
                 System.out.println(String.format("Welcome %s", json.get("User")));
                 User = json.get("User").toString();
                 UserType = "UU";
+            } else if (json.has("Error"))
+            {
+                System.out.println(json.get("Error"));
             }
         } else if (selection == 2)
         {
@@ -155,6 +158,9 @@ public class testdriver2
                 System.out.println(String.format("Welcome %s", json.get("User")));
                 User = json.get("User").toString();
                 UserType = "UU";
+            } else if (json.has("Error"))
+            {
+                System.out.println(json.get("Error"));
             }
         } else if (selection == 5)
         {
