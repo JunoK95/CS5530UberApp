@@ -108,7 +108,7 @@ public class Database
         try
         {
             _connector.stmt.close();
-            if (_connector != null)
+            if (_connector != null && !_connector.conn.isClosed())
             {
                 _connector.closeConnection();
                 System.out.println("Database connection terminated");

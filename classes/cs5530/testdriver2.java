@@ -1,12 +1,9 @@
 package cs5530;
 
-
-
-import java.lang.*;
-import java.io.*;
-import java.util.Dictionary;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.Hashtable;
 
 public class testdriver2
 {
@@ -16,22 +13,19 @@ public class testdriver2
      */
     public static void displayMenu()
     {
-        System.out.println("        Welcome to UUber System     ");
-        System.out.println("1. register a new user:");
-        System.out.println("2. enter your own query:");
-        System.out.println("3. exit:");
+        System.out.println("=============================");
+        System.out.println("Welcome to UUber System");
+        System.out.println("1. register");
+        System.out.println("2. login");
+        System.out.println("3. enter your own query");
+        System.out.println("4. exit");
+        System.out.println("=============================");
         System.out.println("please enter your choice:");
     }
 
     public static void main(String[] args)
     {
-        // TODO Auto-generated method stub
-        System.out.println("Example for cs5530");
         String choice;
-        String cname;
-        String dname;
-        String sql = null;
-        int c = 0;
         try
         {
             Database.Main().Connect();
@@ -41,51 +35,78 @@ public class testdriver2
             while (true)
             {
                 displayMenu();
+                int selection;
                 while ((choice = in.readLine()) == null && choice.length() == 0) ;
                 try
                 {
-                    c = Integer.parseInt(choice);
-                } catch (Exception e)
+                    selection = Integer.parseInt(choice);
+                }
+                catch (Exception e)
                 {
-
                     continue;
                 }
-                if (c < 1 | c > 3)
-                    continue;
-                if (c == 1)
-                {
-                    HashMap<String, String> inputs = new HashMap<>();
-                    String[] requiredFields = new String[] {"login", "name", "address", "phone", "password"};
-                    for (String field : requiredFields)
-                    {
-                        System.out.println(String.format("Please enter a %s:", field));
 
-                        String input;
-                        while ((input = in.readLine()) == null && input.length() == 0);
-                        inputs.put(field, input);
-                    }
-                    System.out.println(UU.Register(inputs));
-                } else if (c == 2)
+                try
                 {
-                    System.out.println("please enter your query below:");
-                    while ((sql = in.readLine()) == null && sql.length() == 0)
-                        System.out.println(sql);
-
-                    System.out.println(Database.Main().RunQuery(sql));
-                } else
+                    MainMenu(in, selection);
+                }
+                catch (EndAppException e)
                 {
-                    System.out.println("EoM");
-                    Database.Main().Close();
                     break;
                 }
+                catch (InvalidInputException e)
+                {
+                    System.out.println("Invalid Input");
+                }
+                catch (IOException e)
+                {
+                    System.out.println("Error reading input");
+                }
             }
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             e.printStackTrace();
             System.err.println("Either connection error or query execution error!");
-        } finally
+        }
+        finally
         {
             Database.Main().Close();
+        }
+    }
+
+    private static void MainMenu(BufferedReader in, int selection) throws EndAppException, InvalidInputException, IOException
+    {
+        if (selection < 1 | selection > 4) throw new InvalidInputException();
+        if (selection == 1)
+        {
+            HashMap<String, String> inputs = new HashMap<>();
+            String[] requiredFields = new String[]{"login", "name", "address", "phone", "password"};
+            for (String field : requiredFields)
+            {
+                System.out.println(String.format("Please enter a %s:", field));
+
+                String input;
+                while ((input = in.readLine()) == null && input.length() == 0) ;
+                inputs.put(field, input);
+            }
+            System.out.println(UU.Register(inputs));
+        } else if (selection == 2)
+        {
+
+        } else if (selection == 3)
+        {
+            System.out.println("please enter your query below:");
+            String sql;
+            while ((sql = in.readLine()) == null && sql.length() == 0)
+                System.out.println(sql);
+
+            System.out.println(Database.Main().RunQuery(sql));
+        } else
+        {
+            System.out.println("Closing Application");
+            Database.Main().Close();
+            throw new EndAppException();
         }
     }
 }

@@ -19,6 +19,10 @@ public class UU
         return Database.Main().RunQuery(sql);
     }
 
+    /**
+     * This is from here:
+     * http://www.baeldung.com/sha-256-hashing-java
+     */
     private static String bytesToHex(byte[] hash) {
         StringBuffer hexString = new StringBuffer();
         for (int i = 0; i < hash.length; i++) {
