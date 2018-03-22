@@ -119,19 +119,18 @@ public class Database
         }
     }
 
-    public String RunUpdate(String sql)
+    public String RunUpdate(String sql) throws ModelFailed
     {
         List<String> objects = new LinkedList<>();
 
         System.out.println("executing " + sql);
         try
         {
-            return _connector.stmt.executeUpdate(sql) == 1 ? "Success" : "Fail";
+            return _connector.stmt.executeUpdate(sql) >= 0 ? "Success" : "Fail";
         }
         catch (Exception e)
         {
-            System.out.println(e.toString());
-            return e.getLocalizedMessage();
+            throw new ModelFailed(e.getMessage());
         }
     }
 }

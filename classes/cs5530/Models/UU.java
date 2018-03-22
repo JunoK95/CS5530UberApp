@@ -88,16 +88,10 @@ public class UU
                     .collect(Collectors.joining(", "));
 
             String sql = String.format("INSERT INTO UU (%s) VALUES (%s)", String.join(",", fields.keySet()), values);
-            String res = Database.Main().RunUpdate(sql);
-            if (res.equals("Success"))
-            {
-                JSONObject response = new JSONObject();
-                response.put("User", fields.get("login"));
-                return response;
-            } else
-            {
-                throw new ModelFailed(res);
-            }
+            Database.Main().RunUpdate(sql);
+            JSONObject response = new JSONObject();
+            response.put("User", fields.get("login"));
+            return response;
         }
         catch (Exception e)
         {

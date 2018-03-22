@@ -1,5 +1,6 @@
 package cs5530;
 
+import cs5530.Models.UC;
 import cs5530.Models.UD;
 import cs5530.Models.UU;
 import org.json.JSONException;
@@ -30,6 +31,7 @@ public class testdriver2
             case "UD":
                 System.out.println(String.format("UUber driver logged in as %s", User));
                 System.out.println("1. logout");
+                System.out.println("2. Create or Update UC");
                 break;
             default:
                 System.out.println("Welcome to UUber System");
@@ -117,12 +119,26 @@ public class testdriver2
 
     private static void UberDriverMenu(BufferedReader in, int selection) throws InvalidInputException
     {
-        if (selection < 1 | selection > 1) throw new InvalidInputException();
-        if (selection == 1)
+        if (selection < 1 | selection > 2) throw new InvalidInputException();
+        try
         {
-            User = "";
-            UserType = "";
-            System.out.println("Logged out");
+            if (selection == 1)
+            {
+                User = "";
+                UserType = "";
+                System.out.println("Logged out");
+            } else if (selection == 2)
+            {
+                HashMap<String, String> inputs = new HashMap<>();
+                GetFieldsFromInput(in, inputs, new String[]{"vin", "category", "make", "model", "year"});
+                inputs.put("login", User);
+                JSONObject json = UC.Create(inputs);
+                System.out.println(json);
+            }
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
         }
     }
 
