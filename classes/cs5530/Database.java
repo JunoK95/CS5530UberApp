@@ -99,7 +99,7 @@ public class Database
         {
             return objects.get(0);
         }
-        return "";
+        return null;
     }
 
     public void Close()

@@ -1,8 +1,10 @@
-package cs5530;
+package cs5530.Models;
 
+import cs5530.DataUtils;
+import cs5530.Database;
+import cs5530.ModelFailed;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONString;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -23,7 +25,7 @@ public class UU
         return Database.Main().RunQuery(sql);
     }
 
-    public static Boolean Login(HashMap<String, String> fields, JSONObject response)
+    public static JSONObject Login(HashMap<String, String> fields) throws ModelFailed, JSONException, NoSuchAlgorithmException
     {
         try
         {
@@ -31,9 +33,7 @@ public class UU
             String error = DataUtils.VerifyFields(requiredFields, fields.keySet());
             if (error != null)
             {
-                response.put("Success", false);
-                response.put("Error", error);
-                return false;
+                throw new ModelFailed(error);
             }
 
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -48,30 +48,25 @@ public class UU
                 JSONObject query = new JSONObject(res);
                 if (query.get("password").toString().equals(password))
                 {
-                    response.put("Success", true);
+                    JSONObject response = new JSONObject();
                     response.put("User", query.get("login").toString());
-                    return true;
+                    return response;
                 } else
                 {
-                    response.put("Success", false);
-                    response.put("Error", "Invalid login or password");
-                    return false;
+                    throw new ModelFailed("Invalid login or password");
                 }
             } else
             {
-                response.put("Success", false);
-                response.put("Error", "Invalid login or password");
-                return false;
+                throw new ModelFailed("Invalid login or password");
             }
         }
         catch (Exception e)
         {
-            System.out.println(e.toString());
-            return false;
+            throw e;
         }
     }
 
-    public static Boolean Register(HashMap<String, String> fields, JSONObject response)
+    public static JSONObject Register(HashMap<String, String> fields) throws ModelFailed, JSONException, NoSuchAlgorithmException
     {
         try
         {
@@ -79,9 +74,7 @@ public class UU
             String error = DataUtils.VerifyFields(requiredFields, fields.keySet());
             if (error != null)
             {
-                response.put("Success", false);
-                response.put("Error", error);
-                return false;
+                throw new ModelFailed(error);
             }
 
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -98,20 +91,17 @@ public class UU
             String res = Database.Main().RunUpdate(sql);
             if (res.equals("Success"))
             {
-                response.put("Success", true);
+                JSONObject response = new JSONObject();
                 response.put("User", fields.get("login"));
-                return true;
+                return response;
             } else
             {
-                response.put("Success", false);
-                response.put("Error", res);
-                return false;
+                throw new ModelFailed(res);
             }
         }
         catch (Exception e)
         {
-            System.out.println(e.toString());
-            return false;
+            throw e;
         }
     }
 

@@ -1,5 +1,7 @@
 package cs5530;
 
+import cs5530.Models.UD;
+import cs5530.Models.UU;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -89,10 +91,6 @@ public class testdriver2
                 {
                     System.out.println("Invalid Input");
                 }
-                catch (IOException e)
-                {
-                    System.out.println("Error reading input");
-                }
             }
         }
         catch (Exception e)
@@ -128,53 +126,61 @@ public class testdriver2
         }
     }
 
-    private static void MainMenu(BufferedReader in, int selection) throws EndAppException, InvalidInputException, IOException, JSONException
+    private static void MainMenu(BufferedReader in, int selection) throws EndAppException, InvalidInputException
     {
         if (selection < 1 | selection > 6) throw new InvalidInputException();
-        if (selection == 1)
+        try
         {
-            HashMap<String, String> inputs = new HashMap<>();
-            GetFieldsFromInput(in, inputs, new String[]{"login", "name", "address", "phone", "password"});
-            JSONObject json = new JSONObject();
-            if (UU.Register(inputs, json))
+            if (selection == 1)
             {
+                HashMap<String, String> inputs = new HashMap<>();
+                GetFieldsFromInput(in, inputs, new String[]{"login", "name", "address", "phone", "password"});
+                JSONObject json = UU.Register(inputs);
                 System.out.println(String.format("Welcome %s", json.get("User")));
                 User = json.get("User").toString();
                 UserType = "UU";
-            } else if (json.has("Error"))
+            } else if (selection == 2)
             {
-                System.out.println(json.get("Error"));
-            }
-        } else if (selection == 2)
-        {
-
-        } else if (selection == 3)
-        {
-            HashMap<String, String> inputs = new HashMap<>();
-            GetFieldsFromInput(in, inputs, new String[]{"login", "password"});
-            JSONObject json = new JSONObject();
-            if (UU.Login(inputs, json))
+                HashMap<String, String> inputs = new HashMap<>();
+                GetFieldsFromInput(in, inputs, new String[]{"login", "name", "address", "phone", "password"});
+                JSONObject json = UD.Register(inputs);
+                System.out.println(String.format("Welcome %s", json.get("User")));
+                User = json.get("User").toString();
+                UserType = "UD";
+            } else if (selection == 3)
             {
+                HashMap<String, String> inputs = new HashMap<>();
+                GetFieldsFromInput(in, inputs, new String[]{"login", "password"});
+                JSONObject json = UU.Login(inputs);
                 System.out.println(String.format("Welcome %s", json.get("User")));
                 User = json.get("User").toString();
                 UserType = "UU";
-            } else if (json.has("Error"))
+            } else if (selection == 4)
             {
-                System.out.println(json.get("Error"));
-            }
-        } else if (selection == 5)
-        {
-            System.out.println("please enter your query below:");
-            String sql;
-            while ((sql = in.readLine()) == null && sql.length() == 0)
-                System.out.println(sql);
+                HashMap<String, String> inputs = new HashMap<>();
+                GetFieldsFromInput(in, inputs, new String[]{"login", "password"});
+                JSONObject json = UD.Login(inputs);
+                System.out.println(String.format("Welcome %s", json.get("User")));
+                User = json.get("User").toString();
+                UserType = "UD";
+            } else if (selection == 5)
+            {
+                System.out.println("please enter your query below:");
+                String sql;
+                while ((sql = in.readLine()) == null && sql.length() == 0)
+                    System.out.println(sql);
 
-            System.out.println(Database.Main().RunQuery(sql));
-        } else
+                System.out.println(Database.Main().RunQuery(sql));
+            } else
+            {
+                System.out.println("Closing Application");
+                Database.Main().Close();
+                throw new EndAppException();
+            }
+        }
+        catch (Exception e)
         {
-            System.out.println("Closing Application");
-            Database.Main().Close();
-            throw new EndAppException();
+            System.out.println(e.getMessage());
         }
     }
 

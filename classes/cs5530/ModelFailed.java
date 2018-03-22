@@ -1,5 +1,9 @@
 package cs5530;
 
-public class InvalidInputException extends Throwable
+public class ModelFailed extends Exception
 {
+    public ModelFailed(String error)
+    {
+        super(error);
+    }
 }
