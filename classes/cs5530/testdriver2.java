@@ -136,9 +136,13 @@ public class testdriver2
                 System.out.println(json);
             }
         }
+        catch (ModelFailed e)
+        {
+            HandleModelFailed(e);
+        }
         catch (Exception e)
         {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -194,9 +198,13 @@ public class testdriver2
                 throw new EndAppException();
             }
         }
+        catch (ModelFailed e)
+        {
+            HandleModelFailed(e);
+        }
         catch (Exception e)
         {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -209,6 +217,21 @@ public class testdriver2
             String input;
             while ((input = in.readLine()) == null && input.length() == 0) ;
             inputs.put(field, input);
+        }
+    }
+
+    private static void HandleModelFailed(ModelFailed e)
+    {
+        try
+        {
+            JSONObject result = new JSONObject();
+            result.put("Success", false);
+            result.put("Error", e.getMessage());
+            System.out.println(result);
+        }
+        catch (JSONException e1)
+        {
+            e1.printStackTrace();
         }
     }
 }
