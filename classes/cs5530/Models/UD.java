@@ -18,7 +18,7 @@ public class UD
     public UD()
     {}
 
-    public String AllUsers()
+    public String AllDrivers()
     {
         String sql = "SELECT * FROM UD";
 
