@@ -30,11 +30,7 @@ public class UD
         try
         {
             String[] requiredFields = new String[]{"login", "password"};
-            String error = DataUtils.VerifyFields(requiredFields, fields.keySet());
-            if (error != null)
-            {
-                throw new ModelFailed(error);
-            }
+            DataUtils.VerifyFields(fields.keySet(), requiredFields);
 
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(fields.get("password").getBytes(StandardCharsets.UTF_8));
@@ -71,11 +67,7 @@ public class UD
         try
         {
             String[] requiredFields = new String[]{"login", "name", "address", "phone", "password"};
-            String error = DataUtils.VerifyFields(requiredFields, fields.keySet());
-            if (error != null)
-            {
-                throw new ModelFailed(error);
-            }
+            DataUtils.VerifyFields(fields.keySet(), requiredFields);
 
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(fields.get("password").getBytes(StandardCharsets.UTF_8));

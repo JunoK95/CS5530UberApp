@@ -6,7 +6,7 @@ import cs5530.ModelFailed;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
+import java.util.*;
 
 public class UC
 {
@@ -14,14 +14,9 @@ public class UC
     {
         try
         {
-            String[] requiredFields = new String[]{"vin", "category", "make", "model", "year", "login"};
-            String error = DataUtils.VerifyFields(requiredFields, fields.keySet());
-            if (error != null)
-            {
-                JSONObject response = new JSONObject();
-                response.put("Error", error);
-                return response;
-            }
+            String[] requiredFields = new String[] {"vin", "category", "make", "model", "year", "login"};
+            // Checks that fields contains all the required fields.
+            DataUtils.VerifyFields(fields.keySet(), requiredFields);
 
             String values = DataUtils.SqlValues(fields);
             String update = DataUtils.SqlMatch(fields);
