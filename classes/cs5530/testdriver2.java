@@ -25,11 +25,18 @@ public class testdriver2
             case "UU":
                 System.out.println(String.format("UUber user logged in as %s", User));
                 System.out.println("1. logout");
-                System.out.println("2. reserve");
-                System.out.println("3. assign favorites");
-                System.out.println("4. give feedback");
-                System.out.println("5. assign trust level");
-                System.out.println("6. browse UC");
+                System.out.println("2. make reservation");
+                System.out.println("3. record a favorite UC");
+                System.out.println("4. record a ride");
+                System.out.println("5. give feedback for an UC");
+                System.out.println("6. give a usefulness rating");
+                System.out.println("7. record trust for a UU");
+                System.out.println("8. browse UC");
+                System.out.println("9. get useful feedback for UC");
+                System.out.println("10. UC suggestions");
+                System.out.println("11. degree separation");
+                System.out.println("12. statistics");
+                System.out.println("13. user awards");
                 break;
             case "UD":
                 System.out.println(String.format("UUber driver logged in as %s", User));
@@ -109,9 +116,25 @@ public class testdriver2
         }
     }
 
+
+    /*
+        1. logout
+        2. make reservation
+        3. record a favorite UC
+        4. record a ride
+        5. give feedback for an UC
+        6. give a usefulness rating
+        7. record trust for a UU
+        8. browse UC
+        9. get useful feedback for UC
+        10. UC suggestions
+        11. degree separation
+        12. statistics
+        13. user awards
+     */
     private static void UberUserMenu(BufferedReader in, int selection) throws InvalidInputException, ModelFailed
     {
-        if (selection < 1 | selection > 6) throw new InvalidInputException();
+        if (selection < 1 | selection > 13) throw new InvalidInputException();
         try
         {
             HashMap<String, String> inputs = new HashMap<>();
@@ -129,28 +152,51 @@ public class testdriver2
             } else if (selection == 3)
             {
                 GetFieldsFromInput(in, inputs, new String[]{"vin", "fvdate"});
-                JSONObject json = Favorites.favoriteUC(inputs);
+                JSONObject json = Favorites.FavoriteUC(inputs);
                 System.out.println(json);
             } else if (selection == 4)
+            {
+
+            } else if (selection == 5)
             {
                 GetFieldsFromInput(in, inputs, new String[]{"fid", "vin", "text", "score", "fbdate"});
                 JSONObject json = Feedback.GiveFeedback(inputs);
                 System.out.println(json);
-            } else if (selection == 5)
+
+            } else if (selection == 6)
             {
+
+            } else if (selection == 7)
+            {
+
                 GetFieldsFromInput(in, inputs, new String[]{"userToTrust", "isTrusted"});
                 inputs.put("login1", User);
                 inputs.put("login2", inputs.get("userToTrust"));
                 inputs.remove("userToTrust");
                 inputs.remove("login");
-                JSONObject json = Trust.trustUser(inputs);
+                JSONObject json = Trust.TrustUser(inputs);
                 System.out.println(json);
-            } else if (selection == 6)
+            } else if (selection == 8)
             {
                 GetFieldsFromInput(in, inputs, new String[]{"category"});
                 inputs.remove("login");
                 JSONAware json = UC.Browse(inputs);
                 System.out.println(json.toJSONString());
+            } else if (selection == 9)
+            {
+
+            } else if (selection == 10)
+            {
+
+            } else if (selection == 11)
+            {
+
+            } else if (selection == 12)
+            {
+
+            } else if (selection == 13)
+            {
+
             }
         }
         catch (ModelFailed e)

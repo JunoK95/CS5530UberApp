@@ -12,7 +12,7 @@ public class Trust
     public Trust()
     {}
 
-    public static JSONObject trustUser(HashMap<String, String> fields) throws ModelFailed
+    public static JSONObject TrustUser(HashMap<String, String> fields) throws ModelFailed
     {
         String[] requiredFields = new String[]{"login1", "login2", "isTrusted"};
         DataUtils.VerifyFields(fields.keySet(), requiredFields);

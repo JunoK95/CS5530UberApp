@@ -12,7 +12,7 @@ public class Favorites
     public Favorites()
     {}
 
-    public static JSONObject favoriteUC(HashMap<String, String> fields) throws ModelFailed
+    public static JSONObject FavoriteUC(HashMap<String, String> fields) throws ModelFailed
     {
         String[] requiredFields = new String[]{"login", "vin", "fvdate"};
         DataUtils.VerifyFields(fields.keySet(), requiredFields);
@@ -23,7 +23,7 @@ public class Favorites
         String sql = String.format("INSERT INTO Favorites (%s) VALUES (%s)", String.join(",", fields.keySet()), values);
         Database.Main().RunUpdate(sql);
         JSONObject response = new JSONObject();
-        response.put("User", fields.get("login"));
+        response.put("Success", true);
         return response;
     }
 }
