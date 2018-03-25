@@ -3,15 +3,14 @@ package cs5530.Models;
 import cs5530.DataUtils;
 import cs5530.Database;
 import cs5530.ModelFailed;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class UD
 {
@@ -25,7 +24,7 @@ public class UD
         return Database.Main().RunQuery(sql);
     }
 
-    public static JSONObject Login(HashMap<String, String> fields) throws ModelFailed, JSONException, NoSuchAlgorithmException
+    public static JSONObject Login(HashMap<String, String> fields) throws ModelFailed, NoSuchAlgorithmException, ParseException
     {
         String[] requiredFields = new String[]{"login", "password"};
         DataUtils.VerifyFields(fields.keySet(), requiredFields);
@@ -39,7 +38,7 @@ public class UD
 
         if (res != null)
         {
-            JSONObject query = new JSONObject(res);
+            JSONObject query = (JSONObject) new JSONParser().parse(res);
             if (query.get("password").toString().equals(password))
             {
                 JSONObject response = new JSONObject();
@@ -55,7 +54,7 @@ public class UD
         }
     }
 
-    public static JSONObject Register(HashMap<String, String> fields) throws ModelFailed, JSONException, NoSuchAlgorithmException
+    public static JSONObject Register(HashMap<String, String> fields) throws ModelFailed, NoSuchAlgorithmException
     {
         String[] requiredFields = new String[]{"login", "name", "address", "phone", "password"};
         DataUtils.VerifyFields(fields.keySet(), requiredFields);

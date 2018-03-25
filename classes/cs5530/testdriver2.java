@@ -1,8 +1,8 @@
 package cs5530;
 
 import cs5530.Models.*;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.simple.JSONAware;
+import org.json.simple.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -125,17 +125,17 @@ public class testdriver2
             {
                 GetFieldsFromInput(in, inputs, new String[]{"vin", "pid", "cost", "date"});
                 JSONObject json = Reserve.ReserveUC(inputs);
-                System.out.println(String.format("Reserve added"));
+                System.out.println(json);
             } else if (selection == 3)
             {
                 GetFieldsFromInput(in, inputs, new String[]{"vin", "fvdate"});
                 JSONObject json = Favorites.favoriteUC(inputs);
-                System.out.println(String.format("Added to Favorites"));
+                System.out.println(json);
             } else if (selection == 4)
             {
                 GetFieldsFromInput(in, inputs, new String[]{"fid", "vin", "text", "score", "fbdate"});
                 JSONObject json = Feedback.GiveFeedback(inputs);
-                System.out.println(String.format("Added to Feedback"));
+                System.out.println(json);
             } else if (selection == 5)
             {
                 GetFieldsFromInput(in, inputs, new String[]{"userToTrust", "isTrusted"});
@@ -148,8 +148,9 @@ public class testdriver2
             } else if (selection == 6)
             {
                 GetFieldsFromInput(in, inputs, new String[]{"category"});
-                JSONObject json = UC.Browse(inputs);
-                System.out.println(String.format("Browsing"));
+                inputs.remove("login");
+                JSONAware json = UC.Browse(inputs);
+                System.out.println(json.toJSONString());
             }
         }
         catch (ModelFailed e)
@@ -268,16 +269,9 @@ public class testdriver2
 
     private static void HandleModelFailed(ModelFailed e)
     {
-        try
-        {
-            JSONObject result = new JSONObject();
-            result.put("Success", false);
-            result.put("Error", e.getMessage());
-            System.out.println(result);
-        }
-        catch (JSONException e1)
-        {
-            e1.printStackTrace();
-        }
+        JSONObject result = new JSONObject();
+        result.put("Success", false);
+        result.put("Error", e.getMessage());
+        System.out.println(result);
     }
 }

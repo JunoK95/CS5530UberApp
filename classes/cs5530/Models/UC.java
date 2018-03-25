@@ -3,14 +3,17 @@ package cs5530.Models;
 import cs5530.DataUtils;
 import cs5530.Database;
 import cs5530.ModelFailed;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONAware;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.util.*;
 
 public class UC
 {
-    public static JSONObject Create(HashMap<String, String> fields) throws JSONException, ModelFailed
+    public static JSONObject Create(HashMap<String, String> fields) throws ModelFailed
     {
         String[] requiredFields = new String[]{"vin", "category", "make", "model", "year", "login"};
         // Checks that fields contains all the required fields.
@@ -31,23 +34,18 @@ public class UC
         return result;
     }
 
-    public static JSONObject Browse(HashMap<String, String> fields) throws JSONException, ModelFailed
+    public static JSONAware Browse(HashMap<String, String> fields) throws ModelFailed, ParseException
     {
         String[] requiredFields = new String[]{"category"};
         // Checks that fields contains all the required fields.
         DataUtils.VerifyFields(fields.keySet(), requiredFields);
 
-        // Gets the escaped values, comma delimited.
-        String values = DataUtils.SqlValues(fields);
-        // Gets a string containing the pair name="value" for each field.
-        String update = DataUtils.SqlMatch(fields);
-
+        String matches = DataUtils.SqlMatch(fields);
         // Build the sql string, runs it, and returns success. On fail the exception propagates from RunUpdate().
-        String sql = String.format("SELECT * FROM UC WHERE category = %s ", fields.get("category"));
-        Database.Main().RunUpdate(sql);
-        JSONObject result = new JSONObject();
-        result.put("Success", true);
-        return result;
+        String sql = String.format("SELECT * FROM UC WHERE %s", matches);
+        String result = Database.Main().RunQuery(sql);
+        if (result == null) return new JSONObject();
+        return (JSONAware) new JSONParser().parse(result);
     }
 
 }
