@@ -18,53 +18,19 @@ public class Feedback
     public Feedback()
     {}
 
-    public String AllFeedback()
+    public static JSONObject GiveFeedback(HashMap<String, String> fields) throws ModelFailed, JSONException, NoSuchAlgorithmException
     {
-        String sql = "SELECT * FROM Feedback";
+        String[] requiredFields = new String[]{"login", "fid", "vin", "text", "score", "fbdate"};
+        DataUtils.VerifyFields(fields.keySet(), requiredFields);
 
-        return Database.Main().RunQuery(sql);
-    }
+        String keys = DataUtils.SqlKeys(fields);
+        String values = DataUtils.SqlValues(fields);
 
-    public static JSONObject giveFeedback (HashMap<String, String> fields) throws ModelFailed, JSONException, NoSuchAlgorithmException
-    {
-        try
-        {
-            String[] requiredFields = new String[]{"login", "fid", "vin", "text", "score", "fbdate"};
-            DataUtils.VerifyFields(fields.keySet(), requiredFields);
-
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-
-            Function<String, String> escape = s -> "\"" + s + "\"";
-
-            String values = fields.values().stream()
-                    .map(escape)
-                    .collect(Collectors.joining(", "));
-             //TODO: Needs to handle duplicates
-            String sql = String.format("INSERT INTO Feedback (%s) VALUES (%s)", String.join(",", fields.keySet()), values);
-            String res = Database.Main().RunUpdate(sql);
-            JSONObject response = new JSONObject();
-            response.put("User", fields.get("login"));
-            return response;
-        }
-        catch (Exception e)
-        {
-            throw e;
-        }
-    }
-
-    /**
-     * This is from here:
-     * http://www.baeldung.com/sha-256-hashing-java
-     */
-    private static String bytesToHex(byte[] hash)
-    {
-        StringBuffer hexString = new StringBuffer();
-        for (int i = 0; i < hash.length; i++)
-        {
-            String hex = Integer.toHexString(0xff & hash[i]);
-            if (hex.length() == 1) hexString.append('0');
-            hexString.append(hex);
-        }
-        return hexString.toString();
+        //TODO: Needs to handle duplicates
+        String sql = String.format("INSERT INTO Feedback (%s) VALUES (%s)", keys, values);
+        Database.Main().RunUpdate(sql);
+        JSONObject response = new JSONObject();
+        response.put("Success", true);
+        return response;
     }
 }

@@ -18,53 +18,18 @@ public class Favorites
     public Favorites()
     {}
 
-    public String AllFavorites()
-    {
-        String sql = "SELECT * FROM Favorites";
-
-        return Database.Main().RunQuery(sql);
-    }
-
     public static JSONObject favoriteUC(HashMap<String, String> fields) throws ModelFailed, JSONException, NoSuchAlgorithmException
     {
-        try
-        {
-            String[] requiredFields = new String[]{"login", "vin", "fvdate"};
-            DataUtils.VerifyFields(fields.keySet(), requiredFields);
+        String[] requiredFields = new String[]{"login", "vin", "fvdate"};
+        DataUtils.VerifyFields(fields.keySet(), requiredFields);
 
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        String values = DataUtils.SqlValues(fields);
 
-            Function<String, String> escape = s -> "\"" + s + "\"";
-
-            String values = fields.values().stream()
-                    .map(escape)
-                    .collect(Collectors.joining(", "));
-             //TODO: Needs to handle duplicates
-            String sql = String.format("INSERT INTO Favorites (%s) VALUES (%s)", String.join(",", fields.keySet()), values);
-            Database.Main().RunUpdate(sql);
-            JSONObject response = new JSONObject();
-            response.put("User", fields.get("login"));
-            return response;
-        }
-        catch (Exception e)
-        {
-            throw e;
-        }
-    }
-
-    /**
-     * This is from here:
-     * http://www.baeldung.com/sha-256-hashing-java
-     */
-    private static String bytesToHex(byte[] hash)
-    {
-        StringBuffer hexString = new StringBuffer();
-        for (int i = 0; i < hash.length; i++)
-        {
-            String hex = Integer.toHexString(0xff & hash[i]);
-            if (hex.length() == 1) hexString.append('0');
-            hexString.append(hex);
-        }
-        return hexString.toString();
+        //TODO: Needs to handle duplicates
+        String sql = String.format("INSERT INTO Favorites (%s) VALUES (%s)", String.join(",", fields.keySet()), values);
+        Database.Main().RunUpdate(sql);
+        JSONObject response = new JSONObject();
+        response.put("User", fields.get("login"));
+        return response;
     }
 }

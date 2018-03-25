@@ -27,68 +27,51 @@ public class UD
 
     public static JSONObject Login(HashMap<String, String> fields) throws ModelFailed, JSONException, NoSuchAlgorithmException
     {
-        try
+        String[] requiredFields = new String[]{"login", "password"};
+        DataUtils.VerifyFields(fields.keySet(), requiredFields);
+
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] hash = digest.digest(fields.get("password").getBytes(StandardCharsets.UTF_8));
+        String password = bytesToHex(hash);
+
+        String sql = String.format("SELECT * FROM UD WHERE login=\"%s\"", fields.get("login"));
+        String res = Database.Main().RunQuery(sql);
+
+        if (res != null)
         {
-            String[] requiredFields = new String[]{"login", "password"};
-            DataUtils.VerifyFields(fields.keySet(), requiredFields);
-
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(fields.get("password").getBytes(StandardCharsets.UTF_8));
-            String password = bytesToHex(hash);
-
-            String sql = String.format("SELECT * FROM UD WHERE login=\"%s\"", fields.get("login"));
-            String res = Database.Main().RunQuery(sql);
-
-            if (res != null)
+            JSONObject query = new JSONObject(res);
+            if (query.get("password").toString().equals(password))
             {
-                JSONObject query = new JSONObject(res);
-                if (query.get("password").toString().equals(password))
-                {
-                    JSONObject response = new JSONObject();
-                    response.put("User", query.get("login").toString());
-                    return response;
-                } else
-                {
-                    throw new ModelFailed("Invalid login or password");
-                }
+                JSONObject response = new JSONObject();
+                response.put("User", query.get("login").toString());
+                return response;
             } else
             {
                 throw new ModelFailed("Invalid login or password");
             }
-        }
-        catch (Exception e)
+        } else
         {
-            throw e;
+            throw new ModelFailed("Invalid login or password");
         }
     }
 
     public static JSONObject Register(HashMap<String, String> fields) throws ModelFailed, JSONException, NoSuchAlgorithmException
     {
-        try
-        {
-            String[] requiredFields = new String[]{"login", "name", "address", "phone", "password"};
-            DataUtils.VerifyFields(fields.keySet(), requiredFields);
+        String[] requiredFields = new String[]{"login", "name", "address", "phone", "password"};
+        DataUtils.VerifyFields(fields.keySet(), requiredFields);
 
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(fields.get("password").getBytes(StandardCharsets.UTF_8));
-            fields.put("password", bytesToHex(hash));
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] hash = digest.digest(fields.get("password").getBytes(StandardCharsets.UTF_8));
+        fields.put("password", bytesToHex(hash));
 
-            Function<String, String> escape = s -> "\"" + s + "\"";
+        String keys = DataUtils.SqlKeys(fields);
+        String values = DataUtils.SqlValues(fields);
 
-            String values = fields.values().stream()
-                    .map(escape)
-                    .collect(Collectors.joining(", "));
-
-            String sql = String.format("INSERT INTO UD (%s) VALUES (%s)", String.join(",", fields.keySet()), values);
-            Database.Main().RunUpdate(sql);
-            JSONObject response = new JSONObject();
-            response.put("User", fields.get("login"));
-            return response;
-        }
-        catch (Exception e)
-        {
-            throw e;
-        }
+        String sql = String.format("INSERT INTO UD (%s) VALUES (%s)", keys, values);
+        Database.Main().RunUpdate(sql);
+        JSONObject response = new JSONObject();
+        response.put("User", fields.get("login"));
+        return response;
     }
 
     /**

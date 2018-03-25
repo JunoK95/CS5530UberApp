@@ -26,7 +26,6 @@ public class Database
         try
         {
             _connector = new Connector2();
-            System.out.println("Database connection established");
         }
         catch (Exception e)
         {
@@ -119,14 +118,12 @@ public class Database
         }
     }
 
-    public String RunUpdate(String sql) throws ModelFailed
+    public void RunUpdate(String sql) throws ModelFailed
     {
-        List<String> objects = new LinkedList<>();
-
         System.out.println("executing " + sql);
         try
         {
-            return _connector.stmt.executeUpdate(sql) >= 0 ? "Success" : "Fail";
+            _connector.stmt.executeUpdate(sql);
         }
         catch (Exception e)
         {
