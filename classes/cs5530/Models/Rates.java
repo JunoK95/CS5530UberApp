@@ -5,25 +5,20 @@ import cs5530.Database;
 import cs5530.ModelFailed;
 import org.json.simple.JSONObject;
 
-import java.time.Clock;
 import java.util.HashMap;
 
-public class Feedback
+public class Rates
 {
-    public Feedback()
-    {}
-
-    public static JSONObject GiveFeedback(HashMap<String, String> fields) throws ModelFailed
+    public static JSONObject RateFeedback(HashMap<String, String> fields) throws ModelFailed
     {
-        String[] requiredFields = new String[]{"login", "vin", "text", "score"};
+        String[] requiredFields = new String[]{"login", "fid", "rating"};
         DataUtils.VerifyFields(fields.keySet(), requiredFields);
-
-        fields.put("fbdate", Clock.systemUTC().instant().toString());
 
         String keys = DataUtils.SqlKeys(fields);
         String values = DataUtils.SqlValues(fields);
+        String matches = DataUtils.SqlMatch(fields);
 
-        String sql = String.format("INSERT INTO Feedback (%s) VALUES (%s)", keys, values);
+        String sql = String.format("INSERT INTO Rates (%s) VALUES (%s) ON DUPLICATE KEY UPDATE %s", keys, values, matches);
         Database.Main().RunUpdate(sql);
         JSONObject response = new JSONObject();
         response.put("Success", true);

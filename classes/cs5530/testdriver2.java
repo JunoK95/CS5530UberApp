@@ -151,7 +151,7 @@ public class testdriver2
                 System.out.println(json);
             } else if (selection == 3)
             {
-                GetFieldsFromInput(in, inputs, new String[]{"vin", "fvdate"});
+                GetFieldsFromInput(in, inputs, new String[]{"vin"});
                 JSONObject json = Favorites.FavoriteUC(inputs);
                 System.out.println(json);
             } else if (selection == 4)
@@ -159,16 +159,19 @@ public class testdriver2
 
             } else if (selection == 5)
             {
-                GetFieldsFromInput(in, inputs, new String[]{"fid", "vin", "text", "score", "fbdate"});
+                GetFieldsFromInput(in, inputs, new String[]{"vin", "text", "score"});
                 JSONObject json = Feedback.GiveFeedback(inputs);
                 System.out.println(json);
 
             } else if (selection == 6)
             {
-
+                GetFieldsFromInput(in, inputs, new String[]{"fid", "rating [useless|useful|very useful]"});
+                inputs.put("rating", inputs.get("rating [useless|useful|very useful]"));
+                inputs.remove("rating [useless|useful|very useful]");
+                JSONObject json = Rates.RateFeedback(inputs);
+                System.out.println(json);
             } else if (selection == 7)
             {
-
                 GetFieldsFromInput(in, inputs, new String[]{"userToTrust", "isTrusted"});
                 inputs.put("login1", User);
                 inputs.put("login2", inputs.get("userToTrust"));
