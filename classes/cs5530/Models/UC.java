@@ -35,4 +35,31 @@ public class UC
             throw e;
         }
     }
+
+    public static JSONObject Browse(HashMap<String, String> fields) throws JSONException, ModelFailed
+    {
+        try
+        {
+            String[] requiredFields = new String[] {"category"};
+            // Checks that fields contains all the required fields.
+            DataUtils.VerifyFields(fields.keySet(), requiredFields);
+
+            // Gets the escaped values, comma delimited.
+            String values = DataUtils.SqlValues(fields);
+            // Gets a string containing the pair name="value" for each field.
+            String update = DataUtils.SqlMatch(fields);
+
+            // Build the sql string, runs it, and returns success. On fail the exception propagates from RunUpdate().
+            String sql = String.format("SELECT * FROM UC WHERE category = %s ", values, update);
+            Database.Main().RunUpdate(sql);
+            JSONObject result = new JSONObject();
+            result.put("Success", true);
+            return result;
+        }
+        catch (Exception e)
+        {
+            throw e;
+        }
+    }
+
 }

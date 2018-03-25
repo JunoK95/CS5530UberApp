@@ -3,6 +3,10 @@ package cs5530;
 import cs5530.Models.UC;
 import cs5530.Models.UD;
 import cs5530.Models.UU;
+import cs5530.Models.Reserve;
+import cs5530.Models.Favorites;
+import cs5530.Models.Feedback;
+import cs5530.Models.Trust;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -40,7 +44,11 @@ public class testdriver2
                 System.out.println("3. login UU");
                 System.out.println("4. login UD");
                 System.out.println("5. enter your own query");
-                System.out.println("6. exit");
+                System.out.println("6. reserve");
+                System.out.println("7. assign favorites");
+                System.out.println("8. give feedback");
+                System.out.println("9. assign trust level");
+                System.out.println("10. browse UC");
                 break;
         }
         System.out.println("=============================\n");
@@ -148,7 +156,7 @@ public class testdriver2
 
     private static void MainMenu(BufferedReader in, int selection) throws EndAppException, InvalidInputException
     {
-        if (selection < 1 | selection > 6) throw new InvalidInputException();
+        if (selection < 1 | selection > 20) throw new InvalidInputException();
         try
         {
             if (selection == 1)
@@ -191,7 +199,35 @@ public class testdriver2
                     System.out.println(sql);
 
                 System.out.println(Database.Main().RunQuery(sql));
-            } else
+            } else if (selection == 6){
+                HashMap<String, String> inputs = new HashMap<>();
+                GetFieldsFromInput(in, inputs, new String[]{"login", "vin", "pid", "cost", "date"});
+                JSONObject json = Reserve.ReserveUC(inputs);
+                System.out.println(String.format("Reserve added"));
+            } else if (selection == 7){
+                HashMap<String, String> inputs = new HashMap<>();
+                GetFieldsFromInput(in, inputs, new String[]{"login", "vin", "fvdate"});
+                JSONObject json = Favorites.favoriteUC(inputs);
+                System.out.println(String.format("Added to Favorites"));
+            } else if (selection == 8){
+                HashMap<String, String> inputs = new HashMap<>();
+                GetFieldsFromInput(in, inputs, new String[]{"login", "fid", "vin", "text", "score", "fbdate"});
+                JSONObject json = Feedback.giveFeedback(inputs);
+                System.out.println(String.format("Added to Feedback"));
+            } else if (selection == 9){
+                HashMap<String, String> inputs = new HashMap<>();
+                GetFieldsFromInput(in, inputs, new String[]{"login1", "login2", "isTrusted"});
+                JSONObject json = Trust.trustUser(inputs);
+                System.out.println(String.format("Trust added"));
+            } else if (selection == 10){
+                HashMap<String, String> inputs = new HashMap<>();
+                GetFieldsFromInput(in, inputs, new String[]{"category"});
+                JSONObject json = UC.Browse(inputs);
+                System.out.println(String.format("Browsing"));
+            }
+
+
+            else
             {
                 System.out.println("Closing Application");
                 Database.Main().Close();
@@ -208,6 +244,7 @@ public class testdriver2
         }
     }
 
+    //Reading from Console
     private static void GetFieldsFromInput(BufferedReader in, HashMap<String, String> inputs, String[] requiredFields) throws IOException
     {
         for (String field : requiredFields)
