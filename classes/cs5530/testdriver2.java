@@ -1,14 +1,8 @@
 package cs5530;
 
-import cs5530.Models.UC;
-import cs5530.Models.UD;
-import cs5530.Models.UU;
-import cs5530.Models.Reserve;
-import cs5530.Models.Favorites;
-import cs5530.Models.Feedback;
-import cs5530.Models.Trust;
-import org.json.JSONException;
-import org.json.JSONObject;
+import cs5530.Models.*;
+import org.json.simple.JSONAware;
+import org.json.simple.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,11 +25,25 @@ public class testdriver2
             case "UU":
                 System.out.println(String.format("UUber user logged in as %s", User));
                 System.out.println("1. logout");
+                System.out.println("2. make reservation");
+                System.out.println("3. record a favorite UC");
+                System.out.println("4. record a ride");
+                System.out.println("5. give feedback for an UC");
+                System.out.println("6. give a usefulness rating");
+                System.out.println("7. record trust for a UU");
+                System.out.println("8. browse UC");
+                System.out.println("9. get useful feedback for UC");
+                System.out.println("10. UC suggestions");
+                System.out.println("11. degree separation");
+                System.out.println("12. statistics");
+                System.out.println("13. user awards");
                 break;
             case "UD":
                 System.out.println(String.format("UUber driver logged in as %s", User));
                 System.out.println("1. logout");
                 System.out.println("2. Create or Update UC");
+                System.out.println("3. Go Available");
+                System.out.println("4. Go Unavailable");
                 break;
             default:
                 System.out.println("Welcome to UUber System");
@@ -44,11 +52,7 @@ public class testdriver2
                 System.out.println("3. login UU");
                 System.out.println("4. login UD");
                 System.out.println("5. enter your own query");
-                System.out.println("6. reserve");
-                System.out.println("7. assign favorites");
-                System.out.println("8. give feedback");
-                System.out.println("9. assign trust level");
-                System.out.println("10. browse UC");
+                System.out.println("6. exit");
                 break;
         }
         System.out.println("=============================\n");
@@ -114,22 +118,29 @@ public class testdriver2
         }
     }
 
-    private static void UberUserMenu(BufferedReader in, int selection) throws InvalidInputException
-    {
-        if (selection < 1 | selection > 1) throw new InvalidInputException();
-        if (selection == 1)
-        {
-            User = "";
-            UserType = "";
-            System.out.println("Logged out");
-        }
-    }
 
-    private static void UberDriverMenu(BufferedReader in, int selection) throws InvalidInputException
+    /*
+        1. logout
+        2. make reservation
+        3. record a favorite UC
+        4. record a ride
+        5. give feedback for an UC
+        6. give a usefulness rating
+        7. record trust for a UU
+        8. browse UC
+        9. get useful feedback for UC
+        10. UC suggestions
+        11. degree separation
+        12. statistics
+        13. user awards
+     */
+    private static void UberUserMenu(BufferedReader in, int selection) throws InvalidInputException, ModelFailed
     {
-        if (selection < 1 | selection > 2) throw new InvalidInputException();
+        if (selection < 1 | selection > 13) throw new InvalidInputException();
         try
         {
+            HashMap<String, String> inputs = new HashMap<>();
+            inputs.put("login", User);
             if (selection == 1)
             {
                 User = "";
@@ -137,10 +148,96 @@ public class testdriver2
                 System.out.println("Logged out");
             } else if (selection == 2)
             {
-                HashMap<String, String> inputs = new HashMap<>();
+                GetFieldsFromInput(in, inputs, new String[]{"vin", "pid", "cost", "date"});
+                JSONObject json = Reserve.ReserveUC(inputs);
+                System.out.println(json);
+            } else if (selection == 3)
+            {
+                GetFieldsFromInput(in, inputs, new String[]{"vin"});
+                JSONObject json = Favorites.FavoriteUC(inputs);
+                System.out.println(json);
+            } else if (selection == 4)
+            {
+
+            } else if (selection == 5)
+            {
+                GetFieldsFromInput(in, inputs, new String[]{"vin", "text", "score"});
+                JSONObject json = Feedback.GiveFeedback(inputs);
+                System.out.println(json);
+
+            } else if (selection == 6)
+            {
+                GetFieldsFromInput(in, inputs, new String[]{"fid", "rating [useless|useful|very useful]"});
+                inputs.put("rating", inputs.get("rating [useless|useful|very useful]"));
+                inputs.remove("rating [useless|useful|very useful]");
+                JSONObject json = Rates.RateFeedback(inputs);
+                System.out.println(json);
+            } else if (selection == 7)
+            {
+                GetFieldsFromInput(in, inputs, new String[]{"userToTrust", "isTrusted"});
+                inputs.put("login1", User);
+                inputs.put("login2", inputs.get("userToTrust"));
+                inputs.remove("userToTrust");
+                inputs.remove("login");
+                JSONObject json = Trust.TrustUser(inputs);
+                System.out.println(json);
+            } else if (selection == 8)
+            {
+                GetFieldsFromInput(in, inputs, new String[]{"category"});
+                inputs.remove("login");
+                JSONAware json = UC.Browse(inputs);
+                System.out.println(json.toJSONString());
+            } else if (selection == 9)
+            {
+
+            } else if (selection == 10)
+            {
+
+            } else if (selection == 11)
+            {
+
+            } else if (selection == 12)
+            {
+
+            } else if (selection == 13)
+            {
+
+            }
+        }
+        catch (ModelFailed e)
+        {
+            HandleModelFailed(e);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private static void UberDriverMenu(BufferedReader in, int selection) throws InvalidInputException
+    {
+        if (selection < 1 | selection > 4) throw new InvalidInputException();
+        try
+        {
+            HashMap<String, String> inputs = new HashMap<>();
+            inputs.put("login", User);
+            if (selection == 1)
+            {
+                User = "";
+                UserType = "";
+                System.out.println("Logged out");
+            } else if (selection == 2)
+            {
                 GetFieldsFromInput(in, inputs, new String[]{"vin", "category", "make", "model", "year"});
-                inputs.put("login", User);
                 JSONObject json = UC.Create(inputs);
+                System.out.println(json);
+            } else if (selection == 3)
+            {
+                JSONObject json = Available.GoAvailble(inputs);
+                System.out.println(json);
+            } else if (selection == 4)
+            {
+                JSONObject json = Available.GoUnavailble(inputs);
                 System.out.println(json);
             }
         }
@@ -199,35 +296,7 @@ public class testdriver2
                     System.out.println(sql);
 
                 System.out.println(Database.Main().RunQuery(sql));
-            } else if (selection == 6){
-                HashMap<String, String> inputs = new HashMap<>();
-                GetFieldsFromInput(in, inputs, new String[]{"login", "vin", "pid", "cost", "date"});
-                JSONObject json = Reserve.ReserveUC(inputs);
-                System.out.println(String.format("Reserve added"));
-            } else if (selection == 7){
-                HashMap<String, String> inputs = new HashMap<>();
-                GetFieldsFromInput(in, inputs, new String[]{"login", "vin", "fvdate"});
-                JSONObject json = Favorites.favoriteUC(inputs);
-                System.out.println(String.format("Added to Favorites"));
-            } else if (selection == 8){
-                HashMap<String, String> inputs = new HashMap<>();
-                GetFieldsFromInput(in, inputs, new String[]{"login", "fid", "vin", "text", "score", "fbdate"});
-                JSONObject json = Feedback.giveFeedback(inputs);
-                System.out.println(String.format("Added to Feedback"));
-            } else if (selection == 9){
-                HashMap<String, String> inputs = new HashMap<>();
-                GetFieldsFromInput(in, inputs, new String[]{"login1", "login2", "isTrusted"});
-                JSONObject json = Trust.trustUser(inputs);
-                System.out.println(String.format("Trust added"));
-            } else if (selection == 10){
-                HashMap<String, String> inputs = new HashMap<>();
-                GetFieldsFromInput(in, inputs, new String[]{"category"});
-                JSONObject json = UC.Browse(inputs);
-                System.out.println(String.format("Browsing"));
-            }
-
-
-            else
+            } else if (selection == 6)
             {
                 System.out.println("Closing Application");
                 Database.Main().Close();
@@ -259,16 +328,9 @@ public class testdriver2
 
     private static void HandleModelFailed(ModelFailed e)
     {
-        try
-        {
-            JSONObject result = new JSONObject();
-            result.put("Success", false);
-            result.put("Error", e.getMessage());
-            System.out.println(result);
-        }
-        catch (JSONException e1)
-        {
-            e1.printStackTrace();
-        }
+        JSONObject result = new JSONObject();
+        result.put("Success", false);
+        result.put("Error", e.getMessage());
+        System.out.println(result);
     }
 }

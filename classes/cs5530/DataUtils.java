@@ -63,4 +63,9 @@ public class DataUtils
         }
         return result.toString();
     }
+
+    public static String SqlKeys(HashMap<String, String> fields)
+    {
+        return String.join(",", fields.keySet());
+    }
 }

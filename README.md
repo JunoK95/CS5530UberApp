@@ -10,4 +10,4 @@
 ### Requires:
 * mysql.jar
 * jsch-0.1.54.jar
-* java-json.jar
+* json_simple-1.1.jar

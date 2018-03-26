@@ -3,15 +3,14 @@ package cs5530.Models;
 import cs5530.DataUtils;
 import cs5530.Database;
 import cs5530.ModelFailed;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class UU
 {
@@ -25,70 +24,53 @@ public class UU
         return Database.Main().RunQuery(sql);
     }
 
-    public static JSONObject Login(HashMap<String, String> fields) throws ModelFailed, JSONException, NoSuchAlgorithmException
+    public static JSONObject Login(HashMap<String, String> fields) throws ModelFailed, NoSuchAlgorithmException, ParseException
     {
-        try
+        String[] requiredFields = new String[]{"login", "password"};
+        DataUtils.VerifyFields(fields.keySet(), requiredFields);
+
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] hash = digest.digest(fields.get("password").getBytes(StandardCharsets.UTF_8));
+        String password = bytesToHex(hash);
+
+        String sql = String.format("SELECT * FROM UU WHERE login=\"%s\"", fields.get("login"));
+        String res = Database.Main().RunQuery(sql);
+
+        if (res != null)
         {
-            String[] requiredFields = new String[]{"login", "password"};
-            DataUtils.VerifyFields(fields.keySet(), requiredFields);
-
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(fields.get("password").getBytes(StandardCharsets.UTF_8));
-            String password = bytesToHex(hash);
-
-            String sql = String.format("SELECT * FROM UU WHERE login=\"%s\"", fields.get("login"));
-            String res = Database.Main().RunQuery(sql);
-
-            if (res != null)
+            JSONObject query = (JSONObject) new JSONParser().parse(res);
+            if (query.get("password").toString().equals(password))
             {
-                JSONObject query = new JSONObject(res);
-                if (query.get("password").toString().equals(password))
-                {
-                    JSONObject response = new JSONObject();
-                    response.put("User", query.get("login").toString());
-                    return response;
-                } else
-                {
-                    throw new ModelFailed("Invalid login or password");
-                }
+                JSONObject response = new JSONObject();
+                response.put("User", query.get("login").toString());
+                return response;
             } else
             {
                 throw new ModelFailed("Invalid login or password");
             }
-        }
-        catch (Exception e)
+        } else
         {
-            throw e;
+            throw new ModelFailed("Invalid login or password");
         }
     }
 
-    public static JSONObject Register(HashMap<String, String> fields) throws ModelFailed, JSONException, NoSuchAlgorithmException
+    public static JSONObject Register(HashMap<String, String> fields) throws ModelFailed, NoSuchAlgorithmException
     {
-        try
-        {
-            String[] requiredFields = new String[]{"login", "name", "address", "phone", "password"};
-            DataUtils.VerifyFields(fields.keySet(), requiredFields);
+        String[] requiredFields = new String[]{"login", "name", "address", "phone", "password"};
+        DataUtils.VerifyFields(fields.keySet(), requiredFields);
 
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(fields.get("password").getBytes(StandardCharsets.UTF_8));
-            fields.put("password", bytesToHex(hash));
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] hash = digest.digest(fields.get("password").getBytes(StandardCharsets.UTF_8));
+        fields.put("password", bytesToHex(hash));
 
-            Function<String, String> escape = s -> "\"" + s + "\"";
+        String keys = DataUtils.SqlKeys(fields);
+        String values = DataUtils.SqlValues(fields);
 
-            String values = fields.values().stream()
-                    .map(escape)
-                    .collect(Collectors.joining(", "));
-
-            String sql = String.format("INSERT INTO UU (%s) VALUES (%s)", String.join(",", fields.keySet()), values);
-            Database.Main().RunUpdate(sql);
-            JSONObject response = new JSONObject();
-            response.put("User", fields.get("login"));
-            return response;
-        }
-        catch (Exception e)
-        {
-            throw e;
-        }
+        String sql = String.format("INSERT INTO UD (%s) VALUES (%s)", keys, values);
+        Database.Main().RunUpdate(sql);
+        JSONObject response = new JSONObject();
+        response.put("User", fields.get("login"));
+        return response;
     }
 
     /**
