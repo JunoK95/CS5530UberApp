@@ -184,11 +184,13 @@ public class testdriver2
                 System.out.println(json);
             } else if (selection == 7)
             {
-                GetFieldsFromInput(in, inputs, new String[]{"userToTrust", "isTrusted"});
+                GetFieldsFromInput(in, inputs, new String[]{"userToTrust", "isTrusted [true/false]"});
                 inputs.put("login1", User);
                 inputs.put("login2", inputs.get("userToTrust"));
+                inputs.put("isTrusted", inputs.get("isTrusted [true/false]"));
                 inputs.remove("userToTrust");
                 inputs.remove("login");
+                inputs.remove("isTrusted [true/false]");
                 JSONObject json = Trust.TrustUser(inputs);
                 System.out.println(json);
             } else if (selection == 8)

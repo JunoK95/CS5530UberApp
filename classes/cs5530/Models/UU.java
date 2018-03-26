@@ -59,6 +59,10 @@ public class UU
         String[] requiredFields = new String[]{"login", "name", "address", "phone", "password"};
         DataUtils.VerifyFields(fields.keySet(), requiredFields);
 
+        if (fields.get("password").length() < 3)
+        {
+            throw new ModelFailed("Password too short. Must be at least 3 characters");
+        }
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         byte[] hash = digest.digest(fields.get("password").getBytes(StandardCharsets.UTF_8));
         fields.put("password", bytesToHex(hash));

@@ -18,11 +18,9 @@ public class Favorites
         String[] requiredFields = new String[]{"login", "vin"};
         DataUtils.VerifyFields(fields.keySet(), requiredFields);
 
-        fields.put("fvdate", Clock.systemUTC().instant().toString());
-
         String values = DataUtils.SqlValues(fields);
 
-        String sql = String.format("INSERT INTO Favorites (%s) VALUES (%s)", String.join(",", fields.keySet()), values);
+        String sql = String.format("INSERT INTO Favorites (%s, fvdate) VALUES (%s, NOW())", String.join(",", fields.keySet()), values);
         Database.Main().RunUpdate(sql);
         JSONObject response = new JSONObject();
         response.put("Success", true);

@@ -18,12 +18,10 @@ public class Feedback
         String[] requiredFields = new String[]{"login", "vin", "text", "score"};
         DataUtils.VerifyFields(fields.keySet(), requiredFields);
 
-        fields.put("fbdate", Clock.systemUTC().instant().toString());
-
         String keys = DataUtils.SqlKeys(fields);
         String values = DataUtils.SqlValues(fields);
 
-        String sql = String.format("INSERT INTO Feedback (%s) VALUES (%s)", keys, values);
+        String sql = String.format("INSERT INTO Feedback (%s, fbdate) VALUES (%s, NOW())", keys, values);
         Database.Main().RunUpdate(sql);
         JSONObject response = new JSONObject();
         response.put("Success", true);
