@@ -22,7 +22,6 @@ public class Favorites
 
         String values = DataUtils.SqlValues(fields);
 
-        //TODO: Needs to handle duplicates
         String sql = String.format("INSERT INTO Favorites (%s) VALUES (%s)", String.join(",", fields.keySet()), values);
         Database.Main().RunUpdate(sql);
         JSONObject response = new JSONObject();

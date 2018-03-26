@@ -42,6 +42,8 @@ public class testdriver2
                 System.out.println(String.format("UUber driver logged in as %s", User));
                 System.out.println("1. logout");
                 System.out.println("2. Create or Update UC");
+                System.out.println("3. Go Available");
+                System.out.println("4. Go Unavailable");
                 break;
             default:
                 System.out.println("Welcome to UUber System");
@@ -214,7 +216,7 @@ public class testdriver2
 
     private static void UberDriverMenu(BufferedReader in, int selection) throws InvalidInputException
     {
-        if (selection < 1 | selection > 2) throw new InvalidInputException();
+        if (selection < 1 | selection > 4) throw new InvalidInputException();
         try
         {
             HashMap<String, String> inputs = new HashMap<>();
@@ -228,6 +230,14 @@ public class testdriver2
             {
                 GetFieldsFromInput(in, inputs, new String[]{"vin", "category", "make", "model", "year"});
                 JSONObject json = UC.Create(inputs);
+                System.out.println(json);
+            } else if (selection == 3)
+            {
+                JSONObject json = Available.GoAvailble(inputs);
+                System.out.println(json);
+            } else if (selection == 4)
+            {
+                JSONObject json = Available.GoUnavailble(inputs);
                 System.out.println(json);
             }
         }

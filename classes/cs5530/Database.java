@@ -75,7 +75,7 @@ public class Database
         }
         catch (Exception e)
         {
-            System.out.println(e.toString());
+            e.printStackTrace();
             return e.getLocalizedMessage();
         }
         finally
