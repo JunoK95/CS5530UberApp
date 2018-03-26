@@ -38,7 +38,8 @@ public class testdriver2
                 System.out.println("10. UC suggestions");
                 System.out.println("11. degree separation");
                 System.out.println("12. statistics");
-                System.out.println("13. user awards");
+                System.out.println("13. top trusted users");
+                System.out.println("14. top useful users");
                 break;
             case "UD":
                 System.out.println(String.format("UUber driver logged in as %s", User));
@@ -138,7 +139,7 @@ public class testdriver2
      */
     private static void UberUserMenu(BufferedReader in, int selection) throws InvalidInputException, ModelFailed
     {
-        if (selection < 1 | selection > 13) throw new InvalidInputException();
+        if (selection < 1 | selection > 14) throw new InvalidInputException();
         try
         {
             HashMap<String, String> inputs = new HashMap<>();
@@ -221,7 +222,14 @@ public class testdriver2
                 inputs.remove("login");
                 JSONAware json = Admin.getTrustedUsers(inputs);
                 System.out.println(json.toJSONString());
+            } else if (selection == 14)
+            {
+                GetFieldsFromInput(in, inputs, new String[]{"number"});
+                inputs.remove("login");
+                JSONAware json = Admin.getUsefulUsers(inputs);
+                System.out.println(json.toJSONString());
             }
+
         }
         catch (ModelFailed e)
         {

@@ -81,8 +81,21 @@ public class Admin
     {
         String[] requiredFields = new String[]{"number"};
         DataUtils.VerifyFields(fields.keySet(), requiredFields);
-        String sql = String.format("SELECT COUNT(*) as trustCount, login2 as login FROM Trust t WHERE t.isTrusted = 1 GROUP BY login2 ORDER BY trustCount DESC LIMIT %s", fields.get("number"));
+        String sql = String.format("SELECT COUNT(*) as trustCount, login2 as login FROM Trust t WHERE t.isTrusted = 1 GROUP BY login2 ORDER BY trustCount DESC LIMIT %s %n", fields.get("number"));
         String res = Database.Main().RunQuery(sql);
+        System.out.println(res);
+        JSONObject response = new JSONObject();
+        response.put("Success", true);
+        return response;
+    }
+
+    public static JSONObject getUsefulUsers(HashMap<String, String> fields) throws ModelFailed, NoSuchAlgorithmException, ParseException
+    {
+        String[] requiredFields = new String[]{"number"};
+        DataUtils.VerifyFields(fields.keySet(), requiredFields);
+        String sql = String.format("SELECT f1.login, AVG(r.rating) as usefulnessRating FROM UD ud, UC uc, Feedback f1, Rates r WHERE uc.login=ud.login AND uc.vin=f1.vin AND r.fid=f1.fid GROUP BY f1.login ORDER BY AVG(r.rating) DESC LIMIT %s %n", fields.get("number"));
+        String res = Database.Main().RunQuery(sql);
+        System.out.println(res);
         JSONObject response = new JSONObject();
         response.put("Success", true);
         return response;
