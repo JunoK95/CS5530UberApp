@@ -51,6 +51,7 @@ public class UC
 
             // Build the sql string, runs it, and returns success. On fail the exception propagates from RunUpdate().
             String sql = String.format("SELECT * FROM UC WHERE category = %s ", values, update);
+            //SELECT * FROM UC where category = 'UberX' and make = 'Toyota' and model = 'Camery' and year = 2006
             Database.Main().RunUpdate(sql);
             JSONObject result = new JSONObject();
             result.put("Success", true);
