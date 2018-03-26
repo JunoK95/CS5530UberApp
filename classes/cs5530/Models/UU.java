@@ -66,7 +66,7 @@ public class UU
         String keys = DataUtils.SqlKeys(fields);
         String values = DataUtils.SqlValues(fields);
 
-        String sql = String.format("INSERT INTO UD (%s) VALUES (%s)", keys, values);
+        String sql = String.format("INSERT INTO UU (%s) VALUES (%s)", keys, values);
         Database.Main().RunUpdate(sql);
         JSONObject response = new JSONObject();
         response.put("User", fields.get("login"));

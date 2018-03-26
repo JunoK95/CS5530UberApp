@@ -4,11 +4,8 @@ import cs5530.DataUtils;
 import cs5530.Database;
 import cs5530.ModelFailed;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.sql.Date;
-import java.time.Clock;
 import java.util.HashMap;
 
 public class Available
