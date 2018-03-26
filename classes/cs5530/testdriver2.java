@@ -185,8 +185,9 @@ public class testdriver2
                 System.out.println(json);
             } else if (selection == 8)
             {
-                GetFieldsFromInput(in, inputs, new String[]{"category"});
+                GetFieldsFromInput(in, inputs, new String[]{"address","category","make","model","year"});
                 inputs.remove("login");
+                System.out.println(inputs);
                 JSONAware json = UC.Browse(inputs);
                 System.out.println(json.toJSONString());
             } else if (selection == 9)

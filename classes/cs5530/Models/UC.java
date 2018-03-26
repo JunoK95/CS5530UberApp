@@ -36,13 +36,17 @@ public class UC
 
     public static JSONAware Browse(HashMap<String, String> fields) throws ModelFailed, ParseException
     {
-        String[] requiredFields = new String[]{"category"};
-        // Checks that fields contains all the required fields.
-        DataUtils.VerifyFields(fields.keySet(), requiredFields);
-
+        String[] opfields = new String[]{"address","category", "make", "model", "year"};
+        for(String s : opfields){
+            if (fields.get(s) == null || fields.get(s).isEmpty()){
+                fields.remove(s);
+            }
+        }
         String matches = DataUtils.SqlMatch(fields);
+        System.out.println(matches);
+        matches = matches.replaceAll(",", " AND");
         // Build the sql string, runs it, and returns success. On fail the exception propagates from RunUpdate().
-        String sql = String.format("SELECT * FROM UC WHERE %s", matches);
+        String sql = String.format("SELECT vin,category,year,make,model,address,UD.login FROM (UC LEFT JOIN Ctypes ON UC.ctype = Ctypes.tid) join UD WHERE %s", matches);
         String result = Database.Main().RunQuery(sql);
         if (result == null) return new JSONObject();
         return (JSONAware) new JSONParser().parse(result);
