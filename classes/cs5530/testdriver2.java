@@ -151,9 +151,11 @@ public class testdriver2
             } else if (selection == 2)
             {
                 GetFieldsFromInput(in, inputs, new String[]{"vin", "pid", "cost", "date"});
-
-                JSONObject json = Reserve.ReserveUC(inputs);
-                System.out.println(json);
+                if (ConfirmInputs(in, inputs))
+                {
+                    JSONObject json = Reserve.ReserveUC(inputs);
+                    System.out.println(json);
+                }
             } else if (selection == 3)
             {
                 GetFieldsFromInput(in, inputs, new String[]{"vin"});
