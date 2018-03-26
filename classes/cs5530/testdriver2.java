@@ -8,6 +8,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class testdriver2
 {
@@ -149,6 +151,7 @@ public class testdriver2
             } else if (selection == 2)
             {
                 GetFieldsFromInput(in, inputs, new String[]{"vin", "pid", "cost", "date"});
+
                 JSONObject json = Reserve.ReserveUC(inputs);
                 System.out.println(json);
             } else if (selection == 3)
@@ -159,8 +162,11 @@ public class testdriver2
             } else if (selection == 4)
             {
                 GetFieldsFromInput(in, inputs, new String[]{"vin", "cost", "begin", "end"});
-                JSONObject json = Ride.Record(inputs);
-                System.out.println(json);
+                if (ConfirmInputs(in, inputs))
+                {
+                    JSONObject json = Ride.Record(inputs);
+                    System.out.println(json);
+                }
             } else if (selection == 5)
             {
                 GetFieldsFromInput(in, inputs, new String[]{"vin", "text", "score"});
@@ -214,6 +220,24 @@ public class testdriver2
         {
             e.printStackTrace();
         }
+    }
+
+    private static boolean ConfirmInputs(BufferedReader in, HashMap<String, String> inputs) throws IOException
+    {
+        Iterator it = inputs.entrySet().iterator();
+        System.out.println("----------------------");
+        while (it.hasNext())
+        {
+            Map.Entry pair = (Map.Entry) it.next();
+            System.out.println(String.format("%s: %s", pair.getKey(), pair.getValue()));
+        }
+        System.out.println("----------------------");
+        System.out.println("Confirm? [y/n]");
+        String input;
+        while ((input = in.readLine()) == null && input.length() == 0) ;
+        input = input.toLowerCase();
+        if (!input.contains("y")) System.out.println("Cancelled.");
+        return input.contains("y");
     }
 
     private static void UberDriverMenu(BufferedReader in, int selection) throws InvalidInputException
