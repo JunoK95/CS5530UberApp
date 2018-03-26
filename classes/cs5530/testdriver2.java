@@ -217,7 +217,10 @@ public class testdriver2
 
             } else if (selection == 13)
             {
-
+                GetFieldsFromInput(in, inputs, new String[]{"number"});
+                inputs.remove("login");
+                JSONAware json = Admin.getTrustedUsers(inputs);
+                System.out.println(json.toJSONString());
             }
         }
         catch (ModelFailed e)
