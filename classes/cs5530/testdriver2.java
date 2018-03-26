@@ -158,7 +158,9 @@ public class testdriver2
                 System.out.println(json);
             } else if (selection == 4)
             {
-
+                GetFieldsFromInput(in, inputs, new String[]{"vin", "cost", "begin", "end"});
+                JSONObject json = Ride.Record(inputs);
+                System.out.println(json);
             } else if (selection == 5)
             {
                 GetFieldsFromInput(in, inputs, new String[]{"vin", "text", "score"});
