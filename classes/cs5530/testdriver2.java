@@ -201,7 +201,10 @@ public class testdriver2
                 System.out.println(json.toJSONString());
             } else if (selection == 9)
             {
-
+                GetFieldsFromInput(in, inputs, new String[]{"ud", "count"});
+                inputs.remove("login");
+                JSONAware json = Feedback.MostUsefulFeedback(inputs);
+                System.out.println(json.toJSONString());
             } else if (selection == 10)
             {
 
