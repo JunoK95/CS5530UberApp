@@ -100,6 +100,16 @@ public class Admin
         response.put("Success", true);
         return response;
     }
+
+    public static JSONObject Statistics() throws ModelFailed, NoSuchAlgorithmException, ParseException
+    {
+        String sql = String.format("SELECT uc.category, uc.vin, COUNT(*) as rides FROM UC uc, Ride r WHERE uc.vin=r.vin GROUP BY uc.category, uc.vin HAVING rides = (SELECT MAX(q2.rides) FROM (SELECT uc.category, uc.vin, COUNT(*) as rides FROM UC uc, Ride r WHERE uc.vin=r.vin GROUP BY uc.category, uc.vin) q2 WHERE q2.category = uc.category)");
+        String res = Database.Main().RunQuery(sql);
+        System.out.println(res);
+        JSONObject response = new JSONObject();
+        response.put("Success", true);
+        return response;
+    }
     /**
      * This is from here:
      * http://www.baeldung.com/sha-256-hashing-java

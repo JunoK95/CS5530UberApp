@@ -83,6 +83,7 @@ public class UC
     public static JSONAware Browse(HashMap<String, String> fields) throws ModelFailed, ParseException
     {
         String[] opfields = new String[]{"address","category", "make", "model", "year"};
+        fields.remove("user");
         for(String s : opfields){
             if (fields.get(s) == null || fields.get(s).isEmpty()){
                 fields.remove(s);
@@ -92,7 +93,28 @@ public class UC
         System.out.println(matches);
         matches = matches.replaceAll(",", " AND");
         // Build the sql string, runs it, and returns success. On fail the exception propagates from RunUpdate().
-        String sql = String.format("SELECT vin,category,year,make,model,address,UD.login FROM (UC LEFT JOIN Ctypes ON UC.ctype = Ctypes.tid) join UD WHERE %s", matches);
+        String sql = String.format("select vin,category,year,make,model,address from UC uc, Ctypes c, UD ud WHERE uc.ctype=c.tid AND %s ORDER BY (SELECT AVG(f.score) FROM Feedback f WHERE f.vin = uc.vin GROUP BY f.vin) DESC", matches);
+        String result = Database.Main().RunQuery(sql);
+        if (result == null) return new JSONObject();
+        return (JSONAware) new JSONParser().parse(result);
+    }
+
+    public static JSONAware Browse2(HashMap<String, String> fields) throws ModelFailed, ParseException
+    {
+        String[] opfields = new String[]{"address","category", "make", "model", "year", "user"};
+        HashMap<String, String> userMap = new HashMap<>();
+        userMap.put("user", fields.get("user"));
+        fields.remove("user");
+        for(String s : opfields){
+            if (fields.get(s) == null || fields.get(s).isEmpty()){
+                fields.remove(s);
+            }
+        }
+        String matches = DataUtils.SqlMatch(fields);
+        System.out.println(matches);
+        matches = matches.replaceAll(",", " AND");
+        // Build the sql string, runs it, and returns success. On fail the exception propagates from RunUpdate().
+        String sql = String.format("select vin,category,year,make,model,address from UC uc, Ctypes c, UD ud WHERE uc.ctype=c.tid AND %s ORDER BY (SELECT AVG(f.score) FROM Feedback f WHERE f.vin = uc.vin AND f.login IN (SELECT t.login2 FROM Trust t WHERE t.login1='%s' GROUP BY t.login2) GROUP BY f.vin) DESC", matches, userMap.get("user"));
         String result = Database.Main().RunQuery(sql);
         if (result == null) return new JSONObject();
         return (JSONAware) new JSONParser().parse(result);

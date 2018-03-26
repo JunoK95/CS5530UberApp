@@ -33,13 +33,14 @@ public class testdriver2
                 System.out.println("5. give feedback for an UC");
                 System.out.println("6. give a usefulness rating");
                 System.out.println("7. record trust for a UU");
-                System.out.println("8. browse UC");
-                System.out.println("9. get useful feedback for UC");
-                System.out.println("10. UC suggestions");
-                System.out.println("11. degree separation");
-                System.out.println("12. statistics");
+                System.out.println("8. browse UC by feedback Score");
+                System.out.println("9. browse UC by trust Score");
+                System.out.println("10. get useful feedback for UC");
+                System.out.println("11. UC suggestions");
+                System.out.println("12. degree separation");
                 System.out.println("13. top trusted users");
                 System.out.println("14. top useful users");
+                System.out.println("15. statistics");
                 break;
             case "UD":
                 System.out.println(String.format("UUber driver logged in as %s", User));
@@ -139,7 +140,7 @@ public class testdriver2
      */
     private static void UberUserMenu(BufferedReader in, int selection) throws InvalidInputException, ModelFailed
     {
-        if (selection < 1 | selection > 14) throw new InvalidInputException();
+        if (selection < 1 | selection > 15) throw new InvalidInputException();
         try
         {
             HashMap<String, String> inputs = new HashMap<>();
@@ -198,18 +199,24 @@ public class testdriver2
             {
                 GetFieldsFromInput(in, inputs, new String[]{"address","category","make","model","year"});
                 inputs.remove("login");
+                inputs.put("user", User);
                 System.out.println(inputs);
                 JSONAware json = UC.Browse(inputs);
                 System.out.println(json.toJSONString());
             } else if (selection == 9)
             {
+                GetFieldsFromInput(in, inputs, new String[]{"address","category","make","model","year"});
+                inputs.remove("login");
+                inputs.put("user", User.toString());
+                System.out.println(inputs);
+                JSONAware json = UC.Browse2(inputs);
+                System.out.println(json.toJSONString());
+            } else if (selection == 10)
+            {
                 GetFieldsFromInput(in, inputs, new String[]{"ud", "count"});
                 inputs.remove("login");
                 JSONAware json = Feedback.MostUsefulFeedback(inputs);
                 System.out.println(json.toJSONString());
-            } else if (selection == 10)
-            {
-
             } else if (selection == 11)
             {
 
@@ -227,6 +234,10 @@ public class testdriver2
                 GetFieldsFromInput(in, inputs, new String[]{"number"});
                 inputs.remove("login");
                 JSONAware json = Admin.getUsefulUsers(inputs);
+                System.out.println(json.toJSONString());
+            }
+            else if (selection == 15){
+                JSONAware json = Admin.Statistics();
                 System.out.println(json.toJSONString());
             }
 
