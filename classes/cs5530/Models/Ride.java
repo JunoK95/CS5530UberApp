@@ -14,13 +14,17 @@ public class Ride
         String[] requiredFields = new String[]{"login", "vin", "cost", "begin", "end"};
         DataUtils.VerifyFields(fields.keySet(), requiredFields);
 
-        String keys = DataUtils.SqlKeys(fields);
-        String values = DataUtils.SqlValues(fields);
+        if (UC.IsAvailable(fields.get("vin"), fields.get("begin"), fields.get("end")))
+        {
+            String keys = DataUtils.SqlKeys(fields);
+            String values = DataUtils.SqlValues(fields);
 
-        String sql = String.format("INSERT INTO Ride (%s) VALUES (%s)", keys, values);
-        Database.Main().RunUpdate(sql);
-        JSONObject response = new JSONObject();
-        response.put("Success", true);
-        return response;
+            String sql = String.format("INSERT INTO Ride (%s) VALUES (%s)", keys, values);
+            Database.Main().RunUpdate(sql);
+            JSONObject response = new JSONObject();
+            response.put("Success", true);
+            return response;
+        }
+        throw new ModelFailed("The UC was not available during this time.");
     }
 }

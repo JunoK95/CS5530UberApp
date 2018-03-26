@@ -11,3 +11,7 @@
 * mysql.jar
 * jsch-0.1.54.jar
 * json_simple-1.1.jar
+
+### Formatting
+* Use YYYY-MM-DD HH:MM:SS for date/times.
+  * ie. 2018-03-24 12:00:00

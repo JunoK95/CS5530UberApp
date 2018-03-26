@@ -19,8 +19,9 @@ public class Trust
 
         String values = DataUtils.SqlValues(fields);
         String keys = DataUtils.SqlKeys(fields);
+        String match = DataUtils.SqlMatch(fields);
 
-        String sql = String.format("INSERT INTO Trust (%s) VALUES (%s)", keys, values);
+        String sql = String.format("INSERT INTO Trust (%s) VALUES (%s) ON DUPLICATE KEY UPDATE %s", keys, values, match);
         Database.Main().RunUpdate(sql);
         JSONObject response = new JSONObject();
         response.put("Success", true);
