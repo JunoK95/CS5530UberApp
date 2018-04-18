@@ -38,7 +38,7 @@ public class Database
         List<String> objects = new LinkedList<>();
 
         ResultSet rs = null;
-        System.out.println("executing " + sql);
+        System.out.println(String.format("Executing:\n %s\n", sql));
         try
         {
 
